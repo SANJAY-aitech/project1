@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman Game</title>
+    <style>
+        body {
+            font-family: cursive;
+            text-align: center;
+            background-image: url("{{url_for('static',filename='img/bg2.jpg')}}");
+            background-size: cover;
+            background-attachment: fixed;  
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .game-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgb(0, 255, 255);
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .word-display {
+            letter-spacing: 10px;
+            font-size: 2em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .game-info {
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        .message {
+            font-weight: bold;
+            color: #ff6347;
+            min-height: 24px;
+        }
+        
+        .guess-input {
+            margin: 20px 0;
+        }
+        
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin-right: 10px;
+            width: 40px;
+            text-align: center;
+        }
+        
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 0 5px;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;    }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        button.reset {
+            background-color: #f44336;
+        }
+        
+        button.reset:hover {
+            background-color: #d32f2f;
+        }
+        
+        button.exit {
+            background-color: #2196F3;
+        }
+        
+        button.exit:hover {
+            background-color: #0b7dda;
+        }
+        
+        .button-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Hangman Game</h1>
+        <h2>Hello, <span id="player-name">{{ player_name }}</span>!</h2>
+        
+        <div class="word-display" id="word-display">{{ display_word }}</div>
+        
+        <div class="game-info">
+            <p>Chances remaining: <span id="chances">{{ chances }}</span></p>
+            <p class="message" id="message">{{ message }}</p>
+        </div>
+        
+        <div class="guess-input">
+            <input type="text" id="guess-letter" maxlength="1" placeholder="A">
+            <button id="guess-button">Guess</button>
+        </div>
+        
+        <div class="button-container">
+            <button class="reset" id="reset-button">New Game</button>
+            <button class="exit" id="exit-button">Exit to Home</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const guessInput = document.getElementById('guess-letter');
+            const guessButton = document.getElementById('guess-button');
+            const resetButton = document.getElementById('reset-button');
+            const exitButton = document.getElementById('exit-button');
+            const wordDisplay = document.getElementById('word-display');
+            const chancesDisplay = document.getElementById('chances');
+            const messageDisplay = document.getElementById('message');
+            
+            function submitGuess() {
+                const letter = guessInput.value.trim().toLowerCase();
+                if (!letter) return;
+                
+                const formData = new FormData();
+                formData.append('guess', letter);
+                
+                fetch('/guess', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    wordDisplay.textContent = data.display_word;
+                    chancesDisplay.textContent = data.chances;
+                    messageDisplay.textContent = data.message;
+                    
+                    if (data.game_state !== 'playing') {
+                        guessInput.disabled = true;
+                        guessButton.disabled = true;
+                    }
+                    
+                    guessInput.value = '';
+                    guessInput.focus();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+            
+            function resetGame() {
+                fetch('/reset', {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    wordDisplay.textContent = data.display_word;
+                    chancesDisplay.textContent = data.chances;
+                    messageDisplay.textContent = data.message;
+                    
+                    guessInput.disabled = false;
+                    guessButton.disabled = false;
+                    guessInput.value = '';
+                    guessInput.focus();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+            
+            function exitToHome() {
+                window.location.href = '/';
+            }
+            
+            guessButton.addEventListener('click', submitGuess);
+            guessInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    submitGuess();
+                }
+            });
+            resetButton.addEventListener('click', resetGame);
+            exitButton.addEventListener('click', exitToHome);
+            guessInput.focus();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Hangman Game</title>
+
+    <style>
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    text-align: center;
+    font-family: cursive;
+    background-image: url("{{ url_for('static',filename='img/bg.jpg') }}");
+    background-size: cover;
+    background-attachment: fixed;  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.div1 {
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(255, 0, 30, 0.89);
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.8);
+    max-width: 500px;
+    width: 90%;
+}
+
+button {
+    background-color: rgb(9, 0, 0);
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    cursor: pointer;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    margin-top: 10px;
+}
+
+input {
+    padding: 5px;
+    margin: 10px 0;
+}
+    </style>
+</head>
+<body>
+    <div class="div1">
+        <h1>Welcome to the Game!!</h1>
+        <form action="/gamepage" method="GET">
+            <label for="player_name"> Enter Your Name:</label>
+            <input type="text" id="player_name" name="player_name" required>
+            
+        <button type="submit"> Start The Game</button>
+        </form>
+
+
+    </div>
+</body>
+</html>
