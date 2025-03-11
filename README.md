@@ -10,4 +10,4 @@ Welcome to the Game! This is a simple web-based game built with Flask.
 ## How to Run Locally
 1. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/hangman-game.git
+   git clone https://github.com/SANJAY-aitech/hangman-game.git
